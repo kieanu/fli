@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- name space는 fully qualified name으로 설정한다. -->
+
+<mapper namespace="com.leepark.fli.model.dao.MusicDao">
+	<!-- api를 통해 서버에 정보 등록하기 위해 만듬 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="musicId" keyColumn="music_id" parameterType="Music">
+        insert into musics (music_id, genre_id, music_title, music_desc, singer, music_date, music_like, music_rank, music_img)
+        values (#{musicId}, #{genreId}, #{musicTitle}, #{musicDesc}, #{singer}, #{musicDate}, #{musicLike}, #{musicRank}, #{musicImg})
+    </insert>
+
+    <select id="selectAll" resultType="Music">
+        SELECT * FROM musics
+    </select>
+    
+    <select id="selectAllByPaging" resultType="Music">
+        SELECT * FROM musics WHERE music_id > #{lastId} LIMIT #{count}
+    </select>
+    
+    <select id="select" resultType="Music">
+        SELECT * FROM musics WHERE music_id = #{musicId}
+    </select>
+    
+    <select id="selectByGenre" parameterType="Integer" resultType="Music">
+        SELECT * FROM musics WHERE genre_id = #{genreId}
+    </select>
+
+    <select id="selectByFavorite" parameterType="User" resultType="Music">
+		SELECT m.* FROM musics m JOIN (SELECT f.* FROM favorites f WHERE f.user_id = #{userId} and f.user_sns = #{userSns}) fu on fu.music_id = m.music_id;
+    </select>
+    
+    <select id="selectByPlaylist" resultType="Music">
+		SELECT * FROM musics
+    	WHERE music_id IN
+    	(
+	        SELECT music_id 
+	        FROM playlistsContents where playlist_id = #{playlist_id}
+        );
+    </select>
+
+    <select id="selectAllByRank" resultType="Music">
+        SELECT * FROM musics ORDER BY music_rank ASC, music_title ASC
+    </select>
+    
+    <select id="selectAllByRankByPaging" resultType="Music">
+        SELECT * FROM musics WHERE music_rank > #{lastRank} LIMIT #{count} ORDER BY music_rank ASC
+    </select>
+    
+    <update id="updateLike" parameterType = "Favorite">
+		UPDATE musics SET music_like = 
+		IF(EXISTS(SELECT * FROM favorites WHERE user_id = #{userId} AND user_sns = #{userSns} AND music_id = #{musicId}), music_like - 1, music_like + 1)
+		WHERE music_id = #{musicId};
+    </update>
+    
+    <update id="batchRanking">	
+		UPDATE musics AS m
+		JOIN (
+			SELECT music_id, dense_rank() OVER (ORDER BY music_like DESC) AS ranking
+			FROM musics
+		) AS r ON r.music_id = m.music_id
+		SET m.music_rank = r.ranking;
+    </update>
+    
+    <select id="selectByRank" resultType="Music">
+        SELECT * FROM musics WHERE music_rank = #{ranking} ORDER BY music_rank ASC, music_title ASC
+    </select>
+    
+    <select id="selectAllBySearch" resultType="Music">
+        SELECT * FROM musics WHERE music_title Like CONCAT('%', #{searchString}, '%') ORDER BY music_title ASC
+    </select>
+    
+    <select id="selectCount" resultType="Integer">
+        SELECT Count(*) FROM musics
+    </select>
+   
+</mapper>

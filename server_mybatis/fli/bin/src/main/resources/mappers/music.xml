@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- name space는 fully qualified name으로 설정한다. -->
+
+<mapper namespace="com.leepark.fli.model.dao.MusicDao">
+	<!-- api를 통해 서버에 정보 등록하기 위해 만듬 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="musicId" keyColumn="music_id" parameterType="Music">
+        insert into musics (music_id, genre_id, music_title, music_desc, singer, music_date, music_like, music_rank, music_img)
+        values (#{musicId}, #{genreId}, #{musicTitle}, #{musicDesc}, #{singer}, #{musicDate}, #{musicLike}, #{musicRank}, #{musicImg})
+    </insert>
+
+    <select id="selectAll" resultType="Music">
+        SELECT * FROM musics
+    </select>
+
+    <select id="select" resultType="Music">
+        SELECT * FROM musics WHERE music_id = #{musicId}
+    </select>
+    
+    <select id="selectByGenre" parameterType="Integer" resultType="Music">
+        SELECT * FROM musics WHERE genre_id = #{genreId}
+    </select>
+
+    <select id="selectByFavorite" parameterType="User" resultType="Music">
+		SELECT m.* FROM musics m JOIN (SELECT f.* FROM favorites f WHERE f.user_id = #{userId} and f.user_sns = #{userSns}) fu on fu.music_id = m.music_id;
+    </select>
+    
+    <select id="selectByPlaylist" resultType="Music">
+		SELECT * FROM musics
+    	WHERE music_id IN
+    	(
+	        SELECT music_id 
+	        FROM playlistsContents where #{playlistId} = (Select playlist_id FROM playlists where user_id = #{userId} And user_sns = #{userSns})
+        );
+    </select>
+   
+</mapper>

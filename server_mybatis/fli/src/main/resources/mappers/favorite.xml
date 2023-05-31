@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- name space는 fully qualified name으로 설정한다. -->
+
+<mapper namespace="com.leepark.fli.model.dao.FavoriteDao">
+
+    <select id="selectAll" parameterType="User" resultType="Favorite">
+        SELECT music_id FROM favorites WHERE user_id = #{userId} and user_sns = #{userSns}
+    </select>
+    
+    <select id="select" parameterType="Favorite" resultType="Favorite">
+        SELECT * FROM favorites WHERE user_id = #{userId} and user_sns = #{userSns} and music_id = #{musicId}
+    </select>
+    
+    <insert id="insert" parameterType="Favorite">
+        INSERT favorites (user_id, user_sns, music_id) values (#{userId}, #{userSns}, #{musicId})
+    </insert>
+    
+    <delete id="delete" parameterType="Favorite">
+        DELETE FROM favorites WHERE user_id = #{userId} and user_sns = #{userSns} and music_id = #{musicId}
+    </delete>
+    
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- name space는 fully qualified name으로 설정한다. -->
+
+<mapper namespace="com.leepark.fli.model.dao.PlaylistContentDao">
+
+    <insert id="insertMusic" parameterType="PlaylistContent">
+        INSERT INTO playlistsContents (playlist_id, music_id)
+        SELECT #{playlistId}, #{musicId} FROM Dual 
+        WHERE NOT EXISTS 
+		(SELECT * FROM playlistsContents WHERE playlist_id = #{playlistId} AND music_id = #{musicId})
+    </insert>
+     
+    <delete id="deleteMusic" parameterType="PlaylistContent">
+        DELETE FROM playlistsContents WHERE playlist_id = #{playlistId} AND music_id = #{musicId};
+    </delete>
+    
+    <delete id="deleteAll">
+        DELETE FROM playlistsContents WHERE playlist_id = #{playlistId}
+    </delete>
+    
+</mapper>

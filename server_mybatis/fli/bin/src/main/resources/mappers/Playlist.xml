@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- name space는 fully qualified name으로 설정한다. -->
+
+<mapper namespace="com.leepark.fli.model.dao.PlaylistDao">
+
+   	<insert id="insert" useGeneratedKeys="true" keyProperty="playlistId" keyColumn="playlist_id" parameterType="Playlist">
+        insert into playlists (playlist_id, user_id, user_sns)
+        values (#{playlistId}, #{userId}, #{userSns})
+    </insert>
+   
+</mapper>

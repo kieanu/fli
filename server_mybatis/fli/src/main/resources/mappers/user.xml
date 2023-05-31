@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- name space는 fully qualified name으로 설정한다. -->
+
+<mapper namespace="com.leepark.fli.model.dao.UserDao">
+
+    <select id="selectAll" resultType="User">
+        SELECT * FROM users
+    </select>
+    
+    <select id="select" resultType="User">
+        SELECT * FROM users WHERE user_id = #{userId} and user_sns = #{userSns}
+    </select>
+    
+    <select id="isUsed" parameterType="User" resultType = "Boolean">
+        SELECT * FROM users WHERE user_id = #{userId} and user_sns = #{userSns}
+    </select>
+    
+    <insert id="insert" parameterType="User">
+        INSERT users (user_id, user_sns, name, token) values (#{userId}, #{userSns}, #{name}, #{token})
+    </insert>
+    
+    <update id="update" parameterType="User">
+    	UPDATE users SET token = #{token} where user_id = #{userId} and user_sns = #{userSns}
+    </update>
+    
+    <delete id="delete">
+        DELETE FROM users WHERE user_id = #{userId} and user_sns = #{userSns}
+    </delete>
+   
+</mapper>
